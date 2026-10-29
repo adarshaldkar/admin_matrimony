@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VevahaMatrimony — Business Owner & Staff Admin Panel</title>
+  
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon">
+          <i class="fa-solid fa-gem"></i>
+        </div>
+        <div class="brand-info">
+          <h2>VEVAHA</h2>
+          <span>Admin Portal v2.4</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Operations</div>
+        
+        <div class="nav-item active" data-view="dashboard">
+          <div class="nav-left">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Executive Dashboard</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-view="members">
+          <div class="nav-left">
+            <i class="fa-solid fa-users"></i>
+            <span>Live Directory</span>
+          </div>
+          <span class="nav-badge" id="sidebar-total-members">12.8k</span>
+        </div>
+
+        <div class="nav-item" data-view="offline">
+          <div class="nav-left">
+            <i class="fa-solid fa-box-archive"></i>
+            <span>Offline Archive</span>
+          </div>
+          <span class="nav-badge" style="background-color: #8B5CF6;" id="sidebar-offline-count">146</span>
+        </div>
+
+        <div class="nav-section-title">Finance & Trust</div>
+
+        <div class="nav-item" data-view="payments">
+          <div class="nav-left">
+            <i class="fa-solid fa-credit-card"></i>
+            <span>Payments & Plans</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-view="kyc">
+          <div class="nav-left">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>KYC Verification</span>
+          </div>
+          <span class="nav-badge" style="background-color: #EF4444;" id="sidebar-kyc-pending">4</span>
+        </div>
+
+        <div class="nav-section-title">System</div>
+
+        <div class="nav-item" data-view="audit">
+          <div class="nav-left">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Staff Audit Logs</span>
+          </div>
+        </div>
+
+        <div class="nav-item" onclick="openLiveWebsite()">
+          <div class="nav-left">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Live Website</span>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-avatar">
+          AA
+          <span class="admin-status-dot"></span>
+        </div>
+        <div class="admin-meta">
+          <div class="name">Adarsh Aldkar</div>
+          <div class="role">Chief Administrator</div>
+        </div>
+        <i class="fa-solid fa-right-from-bracket" style="color: #64748B; cursor: pointer;" title="Logout"></i>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+      
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">
+            <h1 id="topbar-page-heading">Executive Dashboard</h1>
+          </div>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="global-search" placeholder="Search by VM-ID, Name, Mobile, Caste...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-secondary" onclick="openOfflineModal()">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>+ Activate Offline</span>
+          </button>
+          
+          <button class="btn btn-primary" onclick="openPaymentModal()">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            <span>Record Manual Cash</span>
+          </button>
+
+          <button class="icon-btn" title="Recent Alerts" onclick="showNotification('System status: All services operational.')">
+            <i class="fa-regular fa-bell"></i>
+            <span class="badge-dot"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: EXECUTIVE DASHBOARD -->
+      <section id="view-dashboard" class="view-section active">
+        <!-- KPI Row -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon rose">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-label">Registered Members</div>
+              <div class="kpi-value" id="kpi-total-members">12,840</div>
+              <div class="kpi-delta"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% this month</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon emerald">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-label">Monthly Revenue</div>
+              <div class="kpi-value">₹18,45,890</div>
+              <div class="kpi-delta"><i class="fa-solid fa-arrow-trend-up"></i> Razorpay + Cash</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon amber">
+              <i class="fa-solid fa-id-card"></i>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-label">KYC Queue Pending</div>
+              <div class="kpi-value" id="kpi-kyc-pending">4 Pending</div>
+              <div class="kpi-delta" style="color: #F59E0B;"><i class="fa-solid fa-clock"></i> Avg 4h turnaround</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon blue">
+              <i class="fa-solid fa-box-archive"></i>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-label">Offline Archive</div>
+              <div class="kpi-value" id="kpi-offline-count">146 Legacy</div>
+              <div class="kpi-delta"><i class="fa-solid fa-arrows-rotate"></i> Ready to activate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts & Actions Grid -->
+        <div class="dashboard-grid-2">
+          <!-- Revenue Bar Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h3>Revenue Trend (Online Razorpay vs Offline Cash/Branch UPI)</h3>
+                <p>Monitors gateway intake and physical branch cash reconciliation</p>
+              </div>
+              <div class="legend-row">
+                <div><span class="legend-dot" style="background: #DB2777;"></span> Online Razorpay (68%)</div>
+                <div><span class="legend-dot" style="background: #3B82F6;"></span> Branch Walk-in Cash (32%)</div>
+              </div>
+            </div>
+
+            <div class="revenue-bars" id="revenue-bars-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Quick Actions & Alerts -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <h3>Quick Management Actions</h3>
+                <p>Common daily front-desk tasks</p>
+              </div>
+            </div>
+
+            <div class="action-list">
+              <div class="action-tile" onclick="switchView('kyc')">
+                <div class="action-tile-left">
+                  <i class="fa-solid fa-user-shield"></i>
+                  <div>
+                    <h4>Review Pending Aadhaar Cards</h4>
+                    <p>4 applicants waiting for blue tick</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right" style="color: #94A3B8;"></i>
+              </div>
+
+              <div class="action-tile" onclick="switchView('offline')">
+                <div class="action-tile-left">
+                  <i class="fa-solid fa-file-import"></i>
+                  <div>
+                    <h4>Migrate Offline Member</h4>
+                    <p>Activate paper ledger records for web login</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right" style="color: #94A3B8;"></i>
+              </div>
+
+              <div class="action-tile" onclick="openPaymentModal()">
+                <div class="action-tile-left">
+                  <i class="fa-solid fa-receipt"></i>
+                  <div>
+                    <h4>Issue Manual Plan Receipt</h4>
+                    <p>VIP, Diamond, Gold branch cash entries</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right" style="color: #94A3B8;"></i>
+              </div>
+
+              <div class="action-tile" onclick="openLiveWebsite()">
+                <div class="action-tile-left">
+                  <i class="fa-solid fa-globe"></i>
+                  <div>
+                    <h4>VevahaMatrimony Live Portal</h4>
+                    <p>Inspect public bride/groom carousels</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="color: #94A3B8;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Registrations Preview -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h3>Recently Enrolled Matrimonial Profiles</h3>
+              <p>Live Tamil profiles across Mudaliar, Nadar, Chettiar, Brahmin, Gounder communities</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="switchView('members')">View All Directory</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Profile / VM-ID</th>
+                  <th>Caste & Subcaste</th>
+                  <th>Horoscope (Rasi / Star)</th>
+                  <th>Education & Job</th>
+                  <th>Subscription</th>
+                  <th>KYC Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-members">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: LIVE MEMBER DIRECTORY -->
+      <section id="view-members" class="view-section">
+        <div class="table-controls">
+          <div class="filter-group">
+            <select class="select-filter" id="filter-gender" onchange="applyMemberFilters()">
+              <option value="All">All Genders (Grooms & Brides)</option>
+              <option value="Female">Brides Only (Female)</option>
+              <option value="Male">Grooms Only (Male)</option>
+            </select>
+
+            <select class="select-filter" id="filter-caste" onchange="applyMemberFilters()">
+              <option value="All">All Castes</option>
+              <option value="Mudaliar">Mudaliar</option>
+              <option value="Chettiar">Chettiar (Nagarathar)</option>
+              <option value="Nadar">Nadar</option>
+              <option value="Brahmin">Brahmin (Iyer / Iyengar)</option>
+              <option value="Kongu Vellalar">Kongu Vellalar (Gounder)</option>
+              <option value="Thevar">Thevar (Maravar/Kallar)</option>
+              <option value="Pillai">Pillai</option>
+              <option value="Naicker">Naicker (Vanniyar)</option>
+            </select>
+
+            <select class="select-filter" id="filter-plan" onchange="applyMemberFilters()">
+              <option value="All">All Membership Plans</option>
+              <option value="VIP">VIP (₹58,999)</option>
+              <option value="Diamond">Diamond (₹4,719)</option>
+              <option value="Gold">Gold (₹2,359)</option>
+              <option value="Silver">Silver (₹1,179)</option>
+              <option value="Free">Free</option>
+            </select>
+
+            <select class="select-filter" id="filter-kyc" onchange="applyMemberFilters()">
+              <option value="All">All Verification Statuses</option>
+              <option value="Verified">Verified Only (Blue Tick)</option>
+              <option value="Pending">Pending Review</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div style="font-size: 13px; font-weight: 600; color: #64748B;" id="filter-count-label">
+            Showing all profiles
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Profile & Member ID</th>
+                <th>Age & Gender</th>
+                <th>Caste & Subcaste</th>
+                <th>Profession & Location</th>
+                <th>Plan Tier</th>
+                <th>KYC Verification</th>
+                <th>Account Status</th>
+                <th>Inspector</th>
+              </tr>
+            </thead>
+            <tbody id="member-directory-tbody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 3: OFFLINE ARCHIVE & MIGRATION -->
+      <section id="view-offline" class="view-section">
+        <div class="card" style="margin-bottom: 24px; border-left: 4px solid #8B5CF6;">
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <div style="font-size: 32px; color: #8B5CF6;">
+              <i class="fa-solid fa-box-archive"></i>
+            </div>
+            <div>
+              <h3 style="font-size: 16px; font-weight: 700;">Offline Paper Registry & Walk-in Migration System</h3>
+              <p style="font-size: 13px; color: #64748B;">
+                VevahaMatrimony holds 146+ traditional walk-in registrations collected across Chennai, Coimbatore, Madurai, and Tirunelveli branches. Use this tool to preserve their original <strong>VM-OFF-XXXX</strong> ID, assign their primary mobile number, and trigger an automated SMS/WhatsApp portal activation.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Legacy ID</th>
+                <th>Candidate Name</th>
+                <th>Registered Branch</th>
+                <th>Physical Ledger Reference</th>
+                <th>Caste / Subcaste</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Digital Migration</th>
+              </tr>
+            </thead>
+            <tbody id="offline-archive-tbody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 4: PAYMENTS & SUBSCRIPTIONS -->
+      <section id="view-payments" class="view-section">
+        <div class="table-controls">
+          <div class="filter-group">
+            <button class="btn btn-primary" onclick="openPaymentModal()">
+              <i class="fa-solid fa-receipt"></i> Record Manual Cash / UPI
+            </button>
+            <button class="btn btn-secondary" onclick="exportPaymentsCSV()">
+              <i class="fa-solid fa-file-csv"></i> Export GST Ledger
+            </button>
+          </div>
+          <div style="font-size: 13px; font-weight: 600; color: #047857;">
+            Total Collected: ₹18,45,890 (GST Active)
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>Date & Time</th>
+                <th>Member (VM-ID)</th>
+                <th>Plan Tier</th>
+                <th>Gross (incl GST)</th>
+                <th>Payment Channel</th>
+                <th>Invoice</th>
+              </tr>
+            </thead>
+            <tbody id="payments-ledger-tbody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 5: KYC & DOCUMENT VERIFICATION QUEUE -->
+      <section id="view-kyc" class="view-section">
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div class="card-title">
+              <h3>Government ID & Aadhaar Approval Queue ("Blue Tick" Verification)</h3>
+              <p>Compare applicant's registered profile against their official Aadhaar, Passport, or Voter ID document.</p>
+            </div>
+            <span class="badge badge-pending" id="kyc-badge-counter">4 Pending Review</span>
+          </div>
+          
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Queue ID</th>
+                  <th>Member</th>
+                  <th>Doc Type</th>
+                  <th>Submitted Date</th>
+                  <th>Extracted Name vs Profile</th>
+                  <th>AI Match Score</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="kyc-queue-tbody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Split Review Workbench -->
+        <div class="card" id="kyc-workbench-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-title">
+              <h3 id="kyc-workbench-title">Document Inspection Workbench</h3>
+              <p>Review biometric security details and approve Blue Tick badge</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="closeKycWorkbench()">Close Workbench</button>
+          </div>
+
+          <div class="kyc-split-layout" id="kyc-split-content">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: AUDIT LOGS -->
+      <section id="view-audit" class="view-section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h3>Staff Administrative Audit Trail</h3>
+              <p>Cryptographically logged actions for security, data privacy, and compliance</p>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Staff Member</th>
+                  <th>Action Performed</th>
+                  <th>Target Entity</th>
+                  <th>IP Address</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="audit-trail-tbody">
+                <tr>
+                  <td>2026-10-29 12:14:02</td>
+                  <td><strong>Adarsh Aldkar</strong></td>
+                  <td>Approved KYC Blue Tick</td>
+                  <td>VM-40291 (Dr. K. Ananya)</td>
+                  <td>192.168.1.45 (Branch Chennai)</td>
+                  <td><span class="badge badge-verified">Success</span></td>
+                </tr>
+                <tr>
+                  <td>2026-10-29 11:30:19</td>
+                  <td><strong>Staff_Pooja</strong></td>
+                  <td>Recorded Branch Cash ₹58,999</td>
+                  <td>VM-43005 (Er. M. Praveen)</td>
+                  <td>192.168.2.10 (Branch Coimbatore)</td>
+                  <td><span class="badge badge-verified">Receipt Generated</span></td>
+                </tr>
+                <tr>
+                  <td>2026-10-29 10:05:44</td>
+                  <td><strong>System Auto</strong></td>
+                  <td>Generated Watermark on 3 Photos</td>
+                  <td>VM-38104 (Er. R. Karthik)</td>
+                  <td>127.0.0.1 (Internal Worker)</td>
+                  <td><span class="badge badge-verified">Encrypted</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: 85-FIELD PROFILE INSPECTOR MODAL
+       ========================================================================= -->
+  <div class="modal-overlay" id="inspector-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="inspector-modal-title">
+          <i class="fa-solid fa-address-card" style="color: #DB2777;"></i>
+          <span>Member Profile Inspector</span>
+        </h3>
+        <button class="modal-close-btn" onclick="closeInspectorModal()">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" data-tab="tab-personal">1. Personal & Physical</button>
+        <button class="modal-tab-btn" data-tab="tab-horoscope">2. Religious & Horoscope</button>
+        <button class="modal-tab-btn" data-tab="tab-career">3. Education & Career</button>
+        <button class="modal-tab-btn" data-tab="tab-family">4. Family Background</button>
+        <button class="modal-tab-btn" data-tab="tab-partner">5. Partner Expectations</button>
+        <button class="modal-tab-btn" data-tab="tab-watermark">6. Photos & Watermarking</button>
+      </div>
+
+      <div class="modal-body" id="inspector-modal-body">
+        <!-- Dynamically injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: OFFLINE MIGRATION MODAL
+       ========================================================================= -->
+  <div class="modal-overlay" id="offline-modal">
+    <div class="modal-container" style="width: 580px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus" style="color: #8B5CF6;"></i> Activate Offline Account</h3>
+        <button class="modal-close-btn" onclick="closeOfflineModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="offline-activation-form" onsubmit="handleOfflineActivation(event)">
+          <div class="data-group" style="margin-bottom: 14px;">
+            <label>Select Legacy Member</label>
+            <select class="select-filter" style="width: 100%;" id="offline-select-member" required>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div class="data-group" style="margin-bottom: 14px;">
+            <label>Primary WhatsApp / Mobile Number</label>
+            <input type="tel" class="select-filter" style="width: 100%;" id="offline-phone" placeholder="+91 98400 00000" required>
+          </div>
+
+          <div class="data-group" style="margin-bottom: 14px;">
+            <label>Temporary Password / One-Time Passcode</label>
+            <input type="text" class="select-filter" style="width: 100%;" id="offline-temp-pwd" value="Vevaha@2026" required>
+          </div>
+
+          <div class="data-group" style="margin-bottom: 20px;">
+            <label>Activation Notification Channel</label>
+            <div style="display: flex; gap: 16px; font-size: 13px; margin-top: 6px;">
+              <label style="text-transform: none; font-weight: normal; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" checked> Send WhatsApp Welcome Credentials
+              </label>
+              <label style="text-transform: none; font-weight: normal; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" checked> Send SMS Link
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" class="btn btn-secondary" onclick="closeOfflineModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #8B5CF6;">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Migrate & Grant Digital Access
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: RECORD MANUAL CASH / UPI PAYMENT MODAL
+       ========================================================================= -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-container" style="width: 580px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-receipt" style="color: #10B981;"></i> Record Manual Branch Payment</h3>
+        <button class="modal-close-btn" onclick="closePaymentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="payment-form" onsubmit="handleRecordPayment(event)">
+          <div class="data-group" style="margin-bottom: 14px;">
+            <label>Select Member (Search by VM-ID)</label>
+            <select class="select-filter" style="width: 100%;" id="payment-member-select" required>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div class="field-grid-2" style="margin-bottom: 14px;">
+            <div class="data-group">
+              <label>Membership Tier</label>
+              <select class="select-filter" style="width: 100%;" id="payment-plan-select" onchange="updatePlanPrice()" required>
+                <option value="VIP" data-price="58999">VIP Assistance Plan (₹58,999)</option>
+                <option value="Diamond" data-price="4719">Diamond Plan (₹4,719)</option>
+                <option value="Gold" data-price="2359">Gold Plan (₹2,359)</option>
+                <option value="Silver" data-price="1179">Silver Plan (₹1,179)</option>
+              </select>
+            </div>
+
+            <div class="data-group">
+              <label>Amount Collected (incl 18% GST)</label>
+              <input type="text" class="select-filter" style="width: 100%; font-weight: 700; color: #047857;" id="payment-amount" value="₹58,999" readonly>
+            </div>
+          </div>
+
+          <div class="field-grid-2" style="margin-bottom: 14px;">
+            <div class="data-group">
+              <label>Payment Mode</label>
+              <select class="select-filter" style="width: 100%;" id="payment-mode" required>
+                <option value="Branch Cash (Chennai T. Nagar)">Branch Cash (Chennai T. Nagar)</option>
+                <option value="Branch Cash (Coimbatore)">Branch Cash (Coimbatore)</option>
+                <option value="Branch Cash (Madurai)">Branch Cash (Madurai)</option>
+                <option value="Branch UPI QR (Official GPay)">Branch UPI QR (Official GPay)</option>
+                <option value="Direct Bank Transfer (NEFT/RTGS)">Direct Bank Transfer (NEFT/RTGS)</option>
+                <option value="Account Payee Cheque">Account Payee Cheque</option>
+              </select>
+            </div>
+
+            <div class="data-group">
+              <label>Branch Reference / UPI UTR Number</label>
+              <input type="text" class="select-filter" style="width: 100%;" id="payment-ref" placeholder="UTR or Cash Memo No." required>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #10B981;">
+              <i class="fa-solid fa-check"></i> Save & Generate GST Invoice
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast-notification">
+    <i class="fa-solid fa-circle-check" style="color: #10B981;"></i>
+    <span id="toast-message">Action completed successfully.</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
